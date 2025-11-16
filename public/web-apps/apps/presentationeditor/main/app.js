@@ -891,6 +891,14 @@ define('presentationeditor/main/locale/zh.json', {
   'PE.Controllers.Main.errorFilePassProtect': '该文档受密码保护，无法被打开。',
   'PE.Controllers.Main.errorForceSave': '保存文件时发生错误请使用“另存为”选项将文件保存到计算机硬盘中或稍后重试。',
   'PE.Controllers.Main.errorInconsistentExt': '在打开文件时发生了错误。<br> 该文件的扩展名不一致：%1。',
+  'PE.Controllers.Main.errorInconsistentExtDocx':
+    '在打开文件时发生了错误。<br>文件内容对应于文本文档（如 docx），但该文件的扩展名不一致：%1。',
+  'PE.Controllers.Main.errorInconsistentExtPdf':
+    '在打开文件时发生了错误。<br>文件内容对应于以下格式之一：pdf/djvu/xps/oxps，但该文件的扩展名不一致：%1。',
+  'PE.Controllers.Main.errorInconsistentExtPptx':
+    '在打开文件时发生了错误。<br>文件内容对应于演示文稿（如 pptx），但该文件的扩展名不一致：%1。',
+  'PE.Controllers.Main.errorInconsistentExtXlsx':
+    '在打开文件时发生了错误。<br>文件内容对应于电子表格（如 xlsx），但该文件的扩展名不一致：%1。',
   'PE.Controllers.Main.errorKeyEncrypt': '未知密钥描述',
   'PE.Controllers.Main.errorKeyExpire': '密钥过期',
   'PE.Controllers.Main.errorLoadingFont': '字体未加载。<br>请与文档服务器管理员联系。',
@@ -3678,10 +3686,14 @@ define('presentationeditor/main/locale/en.json', {
     'An error occurred while saving the file. Please use the "Save As" option to save the file to your computer\'s hard drive or try again later.',
   'PE.Controllers.Main.errorInconsistentExt':
     'An error occurred while opening the file.<br>The file extension is inconsistent: %1.',
-  'PE.Controllers.Main.errorInconsistentExtDocx': 'PE.Controllers.Main.errorInconsistentExtDocx',
-  'PE.Controllers.Main.errorInconsistentExtPdf': 'PE.Controllers.Main.errorInconsistentExtPdf',
-  'PE.Controllers.Main.errorInconsistentExtPptx': 'PE.Controllers.Main.errorInconsistentExtPptx',
-  'PE.Controllers.Main.errorInconsistentExtXlsx': 'PE.Controllers.Main.errorInconsistentExtXlsx',
+  'PE.Controllers.Main.errorInconsistentExtDocx':
+    'An error has occurred while opening the file.<br>The file content corresponds to text documents (e.g. docx), but the file has the inconsistent extension: %1.',
+  'PE.Controllers.Main.errorInconsistentExtPdf':
+    'An error has occurred while opening the file.<br>The file content corresponds to one of the following formats: pdf/djvu/xps/oxps, but the file has the inconsistent extension: %1.',
+  'PE.Controllers.Main.errorInconsistentExtPptx':
+    'An error has occurred while opening the file.<br>The file content corresponds to presentations (e.g. pptx), but the file has the inconsistent extension: %1.',
+  'PE.Controllers.Main.errorInconsistentExtXlsx':
+    'An error has occurred while opening the file.<br>The file content corresponds to spreadsheets (e.g. xlsx), but the file has the inconsistent extension: %1.',
   'PE.Controllers.Main.errorKeyEncrypt': 'Unknown key description',
   'PE.Controllers.Main.errorKeyExpire': 'Key expired',
   'PE.Controllers.Main.errorLoadingFont': 'Font not loaded.<br>Please contact the document server administrator.',
