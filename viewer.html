@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Document Viewer</title>
+    <!--
+      使い方 / How to use:
+      1. ビルド: pnpm run build
+      2. dist/ フォルダ内の以下のファイルを自分のプロジェクトにコピー:
+         - assets/document-viewer.js (メインのビューアーJS)
+         - assets/document-viewer.css (スタイルシート)
+         - web-apps/ (OnlyOffice SDK)
+         - wasm/ (WebAssembly変換エンジン)
+      3. このHTMLのようにスクリプトとCSSを読み込むだけで使える
+
+      URLパラメータでドキュメントを開く:
+        ?file=https://example.com/document.docx
+        ?src=https://example.com/spreadsheet.xlsx
+    -->
+    <script src="./web-apps/apps/api/documents/api.js"></script>
+    <script type="module" src="./assets/document-viewer.js"></script>
+    <link rel="stylesheet" href="./assets/document-viewer.css">
+  </head>
+
+  <body>
+    <div id="app" style="width: 100%; height: 100%;">
+      <div id="iframe"></div>
+    </div>
+  </body>
+</html>

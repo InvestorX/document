@@ -1,24 +1,4 @@
-import 'ranui/message';
-import { createObjectURL } from 'ranuts/utils';
-import { getDocmentObj } from '../store';
 import { getOnlyOfficeLang, t } from './i18n';
-import { c_oAscFileType2 } from './file-types';
-import type { SaveEvent } from './document-types';
-import { getMimeTypeFromExtension } from './document-utils';
-
-// Import converter function to avoid circular dependency
-let convertBinToDocumentAndDownloadFn:
-  | ((bin: Uint8Array, fileName: string, targetExt?: string) => Promise<any>)
-  | null = null;
-
-export function setConverterCallback(
-  callback: (bin: Uint8Array, fileName: string, targetExt?: string) => Promise<any>,
-): void {
-  convertBinToDocumentAndDownloadFn = callback;
-}
-
-// Global media mapping object
-const media: Record<string, string> = {};
 
 // Editor operation queue to prevent concurrent operations
 let editorOperationQueue: Promise<void> = Promise.resolve();
@@ -63,122 +43,6 @@ async function queueEditorOperation<T>(operation: () => Promise<T>): Promise<T> 
     rejectOperation!(error);
     throw error;
   }
-}
-
-/**
- * Handle file write request (mainly for handling pasted images)
- * @param event - OnlyOffice editor file write event
- */
-async function handleWriteFile(event: any) {
-  try {
-    console.log('Write file event:', event);
-
-    const { data: eventData } = event;
-    if (!eventData) {
-      console.warn('No data provided in writeFile event');
-      return;
-    }
-
-    const {
-      data: imageData, // Uint8Array image data
-      file: fileName, // File name, e.g., "display8image-174799443357-0.png"
-      _target, // Target object containing frameOrigin and other info
-    } = eventData;
-
-    // Validate data
-    if (!imageData || !(imageData instanceof Uint8Array)) {
-      throw new Error('Invalid image data: expected Uint8Array');
-    }
-
-    if (!fileName || typeof fileName !== 'string') {
-      throw new Error('Invalid file name');
-    }
-
-    // Extract extension from file name
-    const fileExtension = fileName.split('.').pop()?.toLowerCase() || 'png';
-    const mimeType = getMimeTypeFromExtension(fileExtension);
-
-    // Create Blob object
-    const blob = new Blob([imageData as unknown as BlobPart], { type: mimeType });
-
-    // Create object URL
-    const objectUrl = await createObjectURL(blob);
-    // Add image URL to media mapping using original file name as key
-    media[`media/${fileName}`] = objectUrl;
-    window.editor?.sendCommand({
-      command: 'asc_setImageUrls',
-      data: {
-        urls: media,
-      },
-    });
-
-    window.editor?.sendCommand({
-      command: 'asc_writeFileCallback',
-      data: {
-        // Image base64
-        path: objectUrl,
-        imgName: fileName,
-      },
-    });
-    console.log(`Successfully processed image: ${fileName}, URL: ${media}`);
-  } catch (error: any) {
-    console.error('Error handling writeFile:', error);
-
-    // Notify editor that file processing failed
-    if (window.editor && typeof window.editor.sendCommand === 'function') {
-      window.editor.sendCommand({
-        command: 'asc_writeFileCallback',
-        data: {
-          success: false,
-          error: error.message,
-        },
-      });
-    }
-
-    if (event.callback && typeof event.callback === 'function') {
-      event.callback({
-        success: false,
-        error: error.message,
-      });
-    }
-  }
-}
-
-async function handleSaveDocument(event: SaveEvent) {
-  console.log('Save document event:', event);
-
-  if (event.data && event.data.data) {
-    const { data, option } = event.data;
-    const { fileName } = getDocmentObj() || {};
-
-    // Determine target format from editor's output format
-    let targetFormat = c_oAscFileType2[option.outputformat];
-
-    // Only force CSV format if the original file is CSV
-    // This check ensures XLSX and other file types are not affected
-    // CSV files are converted to XLSX internally, so editor may return XLSX format
-    if (fileName && fileName.toLowerCase().endsWith('.csv')) {
-      targetFormat = 'CSV';
-      console.log('Original file is CSV, forcing save as CSV format');
-    } else {
-      // For non-CSV files (XLSX, DOCX, PPTX, etc.), use the format returned by editor
-      // This ensures XLSX files are saved as XLSX, not CSV
-      console.log(`Saving as ${targetFormat} format (original file: ${fileName})`);
-    }
-
-    // Create download
-    if (convertBinToDocumentAndDownloadFn) {
-      await convertBinToDocumentAndDownloadFn(data.data, fileName, targetFormat);
-    } else {
-      throw new Error('Converter callback not set');
-    }
-  }
-
-  // Notify editor that save is complete
-  window.editor?.sendCommand({
-    command: 'asc_onSaveCallback',
-    data: { err_code: 0 },
-  });
 }
 
 // Public editor creation method
@@ -240,17 +104,24 @@ export function createEditorInstance(config: {
           url: fileName, // Use file name as identifier
           fileType: fileType,
           permissions: {
-            edit: true,
+            edit: false,
+            download: false,
+            print: false,
             chat: false,
             protect: false,
           },
         },
         editorConfig: {
           lang: editorLang,
+          mode: 'view',
           customization: {
             help: false,
             about: false,
             hideRightMenu: true,
+            compactToolbar: true,
+            toolbarNoTabs: true,
+            compactHeader: true,
+            toolbarHideFileName: true,
             features: {
               spellcheck: {
                 change: false,
@@ -281,13 +152,7 @@ export function createEditorInstance(config: {
           },
           onDocumentReady: () => {
             console.log(`${t('documentLoaded')}${fileName}`);
-            // Note: For CSV files, the save dialog may show XLSX format,
-            // but the actual save will be forced to CSV format in handleSaveDocument
           },
-          onSave: handleSaveDocument,
-          // writeFile
-          // TODO: writeFile - handle when pasting images from external sources
-          writeFile: handleWriteFile,
         },
       });
     } catch (error) {

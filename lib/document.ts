@@ -7,16 +7,22 @@ import { showLoading } from './loading';
 // These will be passed as callbacks or called after document operations
 let hideControlPanelFn: (() => void) | null = null;
 let showControlPanelFn: (() => void) | null = null;
-let showMenuGuideFn: (() => void) | null = null;
 
 export function setUICallbacks(callbacks: {
   hideControlPanel: () => void;
   showControlPanel: () => void;
-  showMenuGuide: () => void;
 }): void {
   hideControlPanelFn = callbacks.hideControlPanel;
   showControlPanelFn = callbacks.showControlPanel;
-  showMenuGuideFn = callbacks.showMenuGuide;
+}
+
+// Auto-detect UI callbacks from window globals
+function getHideControlPanel(): (() => void) | null {
+  return hideControlPanelFn || window.hideControlPanel || null;
+}
+
+function getShowControlPanel(): (() => void) | null {
+  return showControlPanelFn || window.showControlPanel || null;
 }
 
 // Create a single file input element
@@ -27,12 +33,10 @@ fileInput.style.setProperty('visibility', 'hidden');
 document.body.appendChild(fileInput);
 
 export const onCreateNew = async (ext: string): Promise<void> => {
-  // Note: Loading is now shown in the menu button click handler
-  // This function should not show loading again to avoid double loading indicators
   try {
-    // Always hide control panel and ensure FAB is visible when creating new document
-    if (hideControlPanelFn) {
-      hideControlPanelFn();
+    const hideFn = getHideControlPanel();
+    if (hideFn) {
+      hideFn();
     }
     setDocmentObj({
       fileName: 'New_Document' + ext,
@@ -43,19 +47,13 @@ export const onCreateNew = async (ext: string): Promise<void> => {
     await initX2T();
     const { fileName, file: fileBlob } = getDocmentObj();
     await handleDocumentOperation({ file: fileBlob, fileName, isNew: !fileBlob });
-    // Show menu guide after document is loaded
-    if (showMenuGuideFn) {
-      setTimeout(() => {
-        showMenuGuideFn!();
-      }, 1000);
-    }
   } catch (error) {
     console.error('Error creating new document:', error);
-    // Ensure control panel is shown on error
-    if (showControlPanelFn) {
-      showControlPanelFn();
+    const showFn = getShowControlPanel();
+    if (showFn) {
+      showFn();
     }
-    throw error; // Re-throw to let the menu button handler catch it
+    throw error;
   }
 };
 
@@ -76,8 +74,9 @@ export const onOpenDocument = (): void => {
     if (file) {
       const { removeLoading } = showLoading();
       try {
-        if (hideControlPanelFn) {
-          hideControlPanelFn();
+        const hideFn = getHideControlPanel();
+        if (hideFn) {
+          hideFn();
         }
         setDocmentObj({
           fileName: file.name,
@@ -89,17 +88,12 @@ export const onOpenDocument = (): void => {
         await handleDocumentOperation({ file: fileBlob, fileName, isNew: !fileBlob });
         // Clear file selection so the same file can be selected again
         fileInput.value = '';
-        // Show menu guide after document is loaded
-        if (showMenuGuideFn) {
-          setTimeout(() => {
-            showMenuGuideFn!();
-          }, 1000);
-        }
       } catch (error) {
         console.error('Error opening document:', error);
         // Ensure control panel is shown on error
-        if (showControlPanelFn) {
-          showControlPanelFn();
+        const showFn = getShowControlPanel();
+        if (showFn) {
+          showFn();
         }
       } finally {
         // Always remove loading, even if there's an error
@@ -119,8 +113,9 @@ export const onOpenDocument = (): void => {
 export const openDocumentFromUrl = async (url: string, fileName?: string): Promise<void> => {
   const { removeLoading } = showLoading();
   try {
-    if (hideControlPanelFn) {
-      hideControlPanelFn();
+    const hideFn = getHideControlPanel();
+    if (hideFn) {
+      hideFn();
     }
 
     // Fetch the file from URL
@@ -173,18 +168,12 @@ export const openDocumentFromUrl = async (url: string, fileName?: string): Promi
     await initX2T();
     const { fileName: docFileName, file: fileBlob } = getDocmentObj();
     await handleDocumentOperation({ file: fileBlob, fileName: docFileName, isNew: !fileBlob });
-
-    // Show menu guide after document is loaded
-    if (showMenuGuideFn) {
-      setTimeout(() => {
-        showMenuGuideFn!();
-      }, 1000);
-    }
   } catch (error) {
     console.error('Error opening document from URL:', error);
     alert(`Failed to open document: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    if (showControlPanelFn) {
-      showControlPanelFn();
+    const showFn = getShowControlPanel();
+    if (showFn) {
+      showFn();
     }
   } finally {
     removeLoading();

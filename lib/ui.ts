@@ -1,7 +1,6 @@
-import { localStorageGetItem, localStorageSetItem } from 'ranuts/utils';
 import { t } from './i18n';
 import { showLoading } from './loading';
-import { onCreateNew, onOpenDocument } from './document';
+import { onOpenDocument } from './document';
 
 // Hide control panel and show top floating bar
 export const hideControlPanel = (): void => {
@@ -105,29 +104,12 @@ export const createFixedActionButton = (): HTMLElement => {
 
   menuPanel.appendChild(
     createMenuButton(
-      t('uploadDocument'),
+      t('openDocument'),
       () => {
         onOpenDocument();
-        // If user cancelled, nothing happens (onchange won't fire)
-        // If user selected file, document will be opened in handleChange
       },
       false, // Don't show loading immediately - wait for file selection
     ),
-  );
-  menuPanel.appendChild(
-    createMenuButton(t('newWord'), async () => {
-      await onCreateNew('.docx');
-    }),
-  );
-  menuPanel.appendChild(
-    createMenuButton(t('newExcel'), async () => {
-      await onCreateNew('.xlsx');
-    }),
-  );
-  menuPanel.appendChild(
-    createMenuButton(t('newPowerPoint'), async () => {
-      await onCreateNew('.pptx');
-    }),
   );
 
   let isMenuOpen = false;
@@ -192,97 +174,6 @@ export const createFixedActionButton = (): HTMLElement => {
   return fabContainer;
 };
 
-// Show menu guide tooltip
-let menuGuideElement: HTMLElement | null = null;
-const MENU_GUIDE_DISMISSED_KEY = 'menu-guide-dismissed';
-
-export const showMenuGuide = (): void => {
-  // Check if guide was dismissed in localStorage
-  if (localStorageGetItem(MENU_GUIDE_DISMISSED_KEY) === 'true') {
-    return;
-  }
-
-  // Check if guide was already shown in this session
-  if (menuGuideElement) {
-    return;
-  }
-
-  const fabButton = document.querySelector('#fab-button') as HTMLElement;
-  if (!fabButton) {
-    return;
-  }
-
-  // Create guide container
-  const guide = document.createElement('div');
-  guide.id = 'menu-guide';
-  guide.className = 'menu-guide';
-
-  // Create arrow pointing down
-  const arrow = document.createElement('div');
-  arrow.className = 'menu-guide-arrow';
-
-  // Create text content
-  const text = document.createElement('div');
-  text.textContent = t('menuGuide');
-  text.className = 'menu-guide-text';
-
-  // Create close button
-  const closeBtn = document.createElement('button');
-  closeBtn.innerHTML = '×';
-  closeBtn.className = 'menu-guide-close';
-
-  closeBtn.addEventListener('mouseenter', () => {
-    closeBtn.style.color = '#333';
-  });
-  closeBtn.addEventListener('mouseleave', () => {
-    closeBtn.style.color = '#999';
-  });
-
-  const hideGuide = (saveToStorage = false) => {
-    if (saveToStorage) {
-      localStorageSetItem(MENU_GUIDE_DISMISSED_KEY, 'true');
-    }
-    if (guide.parentNode) {
-      guide.style.animation = 'guideFadeOut 0.3s ease';
-      setTimeout(() => {
-        if (guide.parentNode) {
-          guide.parentNode.removeChild(guide);
-        }
-        menuGuideElement = null;
-      }, 300);
-    }
-  };
-
-  closeBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    hideGuide(true);
-  });
-
-  guide.appendChild(arrow);
-  guide.appendChild(text);
-  guide.appendChild(closeBtn);
-  document.body.appendChild(guide);
-  menuGuideElement = guide;
-
-  // Auto hide after 5 seconds (don't save to storage)
-  setTimeout(() => {
-    if (menuGuideElement === guide) {
-      hideGuide(false);
-    }
-  }, 5000);
-
-  // Hide when hovering over menu button (don't save to storage)
-  fabButton.addEventListener(
-    'mouseenter',
-    () => {
-      if (menuGuideElement === guide) {
-        hideGuide(false);
-      }
-    },
-    { once: true },
-  );
-};
-
 // Create and append the control panel
 export const createControlPanel = (): void => {
   // Create control panel container - centered in viewport
@@ -316,55 +207,11 @@ export const createControlPanel = (): void => {
     return button;
   };
 
-  // Create four buttons
-  const uploadButton = createTextButton('upload-button', t('uploadDocument'), () => {
+  // Create upload button
+  const uploadButton = createTextButton('upload-button', t('openDocument'), () => {
     onOpenDocument();
-    // If user cancelled, nothing happens (onchange won't fire, control panel remains visible)
-    // If user selected file, document will be opened and control panel will be hidden in handleChange
   });
   buttonGroup.appendChild(uploadButton);
-
-  const newWordButton = createTextButton('new-word-button', t('newWord'), async () => {
-    hideControlPanel();
-    const { removeLoading } = showLoading();
-    try {
-      await onCreateNew('.docx');
-    } catch (error) {
-      console.error('Error creating new Word document:', error);
-      showControlPanel();
-    } finally {
-      removeLoading();
-    }
-  });
-  buttonGroup.appendChild(newWordButton);
-
-  const newExcelButton = createTextButton('new-excel-button', t('newExcel'), async () => {
-    hideControlPanel();
-    const { removeLoading } = showLoading();
-    try {
-      await onCreateNew('.xlsx');
-    } catch (error) {
-      console.error('Error creating new Excel document:', error);
-      showControlPanel();
-    } finally {
-      removeLoading();
-    }
-  });
-  buttonGroup.appendChild(newExcelButton);
-
-  const newPptxButton = createTextButton('new-pptx-button', t('newPowerPoint'), async () => {
-    hideControlPanel();
-    const { removeLoading } = showLoading();
-    try {
-      await onCreateNew('.pptx');
-    } catch (error) {
-      console.error('Error creating new PowerPoint document:', error);
-      showControlPanel();
-    } finally {
-      removeLoading();
-    }
-  });
-  buttonGroup.appendChild(newPptxButton);
 
   container.appendChild(buttonGroup);
   document.body.appendChild(container);
