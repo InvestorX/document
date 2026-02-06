@@ -2,7 +2,7 @@ import { getExtensions } from 'ranuts/utils';
 import { g_sEmpty_bin } from './empty_bin';
 import { t } from './i18n';
 import { X2TConverter } from './document-converter';
-import { createEditorInstance, loadEditorApi, setConverterCallback } from './onlyoffice-editor';
+import { createEditorInstance, loadEditorApi } from './onlyoffice-editor';
 import { getDocumentType } from './document-utils';
 import type { BinConversionResult, ConversionResult, EmscriptenModule } from './document-types';
 
@@ -36,9 +36,6 @@ export const convertBinToDocumentAndDownload = (
 
 // Export editor functions
 export { createEditorInstance, loadEditorApi };
-
-// Set up converter callback for editor
-setConverterCallback(convertBinToDocumentAndDownload);
 
 // Merged file operation method
 export async function handleDocumentOperation(options: {

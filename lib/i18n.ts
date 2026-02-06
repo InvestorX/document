@@ -32,6 +32,7 @@ export interface I18nMessages {
   // UI text
   webOffice: string;
   uploadDocument: string;
+  openDocument: string;
   newWord: string;
   newExcel: string;
   newPowerPoint: string;
@@ -53,6 +54,7 @@ const messages: Record<Language, I18nMessages> = {
   [LanguageCode.ZH]: {
     webOffice: 'Web Office',
     uploadDocument: '查看/编辑文档',
+    openDocument: '打开文档',
     newWord: '新建 Word',
     newExcel: '新建 Excel',
     newPowerPoint: '新建 PowerPoint',
@@ -68,6 +70,7 @@ const messages: Record<Language, I18nMessages> = {
   [LanguageCode.EN]: {
     webOffice: 'Web Office',
     uploadDocument: 'View/Edit Document',
+    openDocument: 'Open Document',
     newWord: 'New Word',
     newExcel: 'New Excel',
     newPowerPoint: 'New PowerPoint',

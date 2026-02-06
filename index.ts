@@ -1,19 +1,17 @@
 import { getAllQueryString } from 'ranuts/utils';
 import { initEvents, setEventUICallbacks } from './lib/events';
-import { onCreateNew, openDocumentFromUrl, setUICallbacks } from './lib/document';
+import { openDocumentFromUrl, setUICallbacks } from './lib/document';
 import {
   createControlPanel,
   createFixedActionButton,
   hideControlPanel,
   showControlPanel,
-  showMenuGuide,
 } from './lib/ui';
 import 'ranui/button';
 import './styles/base.css';
 
 declare global {
   interface Window {
-    onCreateNew: (ext: string) => Promise<void>;
     hideControlPanel?: () => void;
     showControlPanel?: () => void;
     DocsAPI: {
@@ -29,17 +27,12 @@ initEvents();
 setUICallbacks({
   hideControlPanel,
   showControlPanel,
-  showMenuGuide,
 });
 
 // Set up UI callbacks for events module
 setEventUICallbacks({
   hideControlPanel,
-  showMenuGuide,
 });
-
-// Export onCreateNew to window
-window.onCreateNew = onCreateNew;
 
 // Export control panel functions for use in other modules
 window.hideControlPanel = hideControlPanel;

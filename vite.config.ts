@@ -26,4 +26,15 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Produce a single JS file (no code splitting)
+        inlineDynamicImports: true,
+        entryFileNames: 'assets/document-viewer.js',
+        assetFileNames: 'assets/document-viewer.[ext]',
+      },
+    },
+    cssCodeSplit: false,
+  },
 });
