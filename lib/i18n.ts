@@ -54,7 +54,7 @@ const messages: Record<Language, I18nMessages> = {
   [LanguageCode.ZH]: {
     webOffice: 'Web Office',
     uploadDocument: '查看/编辑文档',
-    openDocument: 'ドキュメントを開く',
+    openDocument: '打开文档',
     newWord: '新建 Word',
     newExcel: '新建 Excel',
     newPowerPoint: '新建 PowerPoint',
