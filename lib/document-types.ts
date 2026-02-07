@@ -20,23 +20,7 @@ export interface ConversionResult {
   media: Record<string, string>;
 }
 
-export interface BinConversionResult {
-  fileName: string;
-  data: BlobPart;
-}
-
 export type DocumentType = 'word' | 'cell' | 'slide';
-
-export interface SaveEvent {
-  data: {
-    data: {
-      data: Uint8Array;
-    };
-    option: {
-      outputformat: number;
-    };
-  };
-}
 
 declare global {
   interface Window {

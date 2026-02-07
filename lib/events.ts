@@ -41,7 +41,7 @@ export const events: Record<string, MessageHandler<any, unknown>> = {
         });
         await initX2T();
         const { fileName, file: fileBlob } = getDocmentObj();
-        await handleDocumentOperation({ file: fileBlob, fileName, isNew: !fileBlob });
+        await handleDocumentOperation({ file: fileBlob, fileName });
       } catch (error) {
         console.error('Error rendering office document:', error);
       } finally {

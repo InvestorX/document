@@ -41,33 +41,9 @@ interface DocEditorConfig {
   events: {
     onAppReady: () => void;
     onDocumentReady: () => void;
-    onSave: (event: SaveEvent) => void;
-    writeFile: (event: WriteFileEvent) => void;
     /** Handle external messages from plugins */
     onExternalPluginMessage?: (event: { type: string; data: any; pluginName?: string }) => void;
   };
-}
-
-interface SaveEvent {
-  data: {
-    data: {
-      data: ArrayBuffer;
-    };
-    option: {
-      outputformat: number;
-    };
-  };
-}
-
-interface WriteFileEvent {
-  data: {
-    data: Uint8Array;
-    file: string;
-    target: {
-      frameOrigin: string;
-    };
-  };
-  callback?: (result: { success: boolean; error?: string }) => void;
 }
 
 interface DocEditor {
@@ -92,7 +68,6 @@ interface DocsAPI {
 
 declare global {
   interface Window {
-    onCreateNew: (ext: string) => Promise<void>;
     DocsAPI: DocsAPI;
     editor: DocEditor;
   }
