@@ -161,24 +161,3 @@ export function createEditorInstance(config: {
     }
   });
 }
-
-export function loadEditorApi(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    // Check if already loaded
-    if (window.DocsAPI) {
-      resolve();
-      return;
-    }
-
-    // Load editor API
-    const script = document.createElement('script');
-    script.src = './web-apps/apps/api/documents/api.js';
-    script.onload = () => resolve();
-    script.onerror = (error) => {
-      console.error('Failed to load OnlyOffice API:', error);
-      alert(t('failedToLoadEditor'));
-      reject(error);
-    };
-    document.head.appendChild(script);
-  });
-}

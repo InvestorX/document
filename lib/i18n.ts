@@ -30,56 +30,29 @@ export type Language = LanguageCode.ZH | LanguageCode.EN;
 
 export interface I18nMessages {
   // UI text
-  webOffice: string;
-  uploadDocument: string;
   openDocument: string;
-  newWord: string;
-  newExcel: string;
-  newPowerPoint: string;
   menu: string;
-  menuGuide: string;
 
   // Messages
-  fileSavedSuccess: string;
   documentLoaded: string;
 
   // Error messages
-  failedToLoadEditor: string;
-  unsupportedFileType: string;
   invalidFileObject: string;
   documentOperationFailed: string;
 }
 
 const messages: Record<Language, I18nMessages> = {
   [LanguageCode.ZH]: {
-    webOffice: 'Web Office',
-    uploadDocument: '查看/编辑文档',
     openDocument: '打开文档',
-    newWord: '新建 Word',
-    newExcel: '新建 Excel',
-    newPowerPoint: '新建 PowerPoint',
     menu: '菜单',
-    menuGuide: '菜单在右下角，悬停即可查看（点击关闭后不再提示）',
-    fileSavedSuccess: '文件保存成功：',
     documentLoaded: '文档加载完成：',
-    failedToLoadEditor: '无法加载编辑器组件。请确保已正确安装 OnlyOffice API。',
-    unsupportedFileType: '不支持的文件类型：',
     invalidFileObject: '无效的文件对象',
     documentOperationFailed: '文档操作失败：',
   },
   [LanguageCode.EN]: {
-    webOffice: 'Web Office',
-    uploadDocument: 'View/Edit Document',
     openDocument: 'Open Document',
-    newWord: 'New Word',
-    newExcel: 'New Excel',
-    newPowerPoint: 'New PowerPoint',
     menu: 'Menu',
-    menuGuide: "Menu is in the bottom right corner, hover to view (click to close, won't show again)",
-    fileSavedSuccess: 'File saved successfully: ',
     documentLoaded: 'Document loaded: ',
-    failedToLoadEditor: 'Failed to load editor component. Please ensure OnlyOffice API is properly installed.',
-    unsupportedFileType: 'Unsupported file type: ',
     invalidFileObject: 'Invalid file object',
     documentOperationFailed: 'Document operation failed: ',
   },

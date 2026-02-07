@@ -1,4 +1,3 @@
-import { getMime } from 'ranuts/utils';
 import type { DocumentType } from './document-types';
 
 /**
@@ -35,17 +34,6 @@ export function getDocumentType(fileType: string): string | null {
     return 'slide';
   }
   return null;
-}
-
-/**
- * Get MIME type from file extension (using ranuts getMime utility)
- * @param extension - File extension
- * @returns string - MIME type
- */
-export function getMimeTypeFromExtension(extension: string): string {
-  // Use ranuts getMime for common image types, fallback to image/png
-  const mime = getMime(extension?.toLowerCase() || '');
-  return mime || 'image/png';
 }
 
 /**
